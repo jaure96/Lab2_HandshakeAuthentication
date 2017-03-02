@@ -4,7 +4,7 @@ import struct
 import random
 import sys
 import uuid
-import MyPackeTManager
+import MyPacketManager
 import ChapCodes
 
 
@@ -71,7 +71,7 @@ def create_challenge(config):
     name = config['localname']
     data = challenge_value_size + challenge_value + name
     print ("Creating challenge with identifier:", identifier)
-    packet = MyPackeTManager.createPacket(ChapCodes.CHALLENGE, identifier, data)
+    packet = MyPacketManager.create_packet(ChapCodes.CHALLENGE, identifier, data)
     return packet, identifier, challenge_value
 
 
