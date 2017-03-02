@@ -14,6 +14,7 @@ def create_packet(code, identifier, data):
 
     return packet
 
+
 def send_packet(my_socket, packet):
     try:
         my_socket.send(packet)
@@ -43,9 +44,7 @@ def receive_packet(sock):
 
         (code, identifier, length, data) = struct.unpack('!BBH' + str(length - 4) + 's', packet)
 
-        return {'code': code,
-                'identifier': identifier,
-                'length': length,
-                'data': data}
+        return {'code': code, 'identifier': identifier, 'length': length, 'data': data}
+
     except Exception as exp:
         print("ERROR: ", exp)

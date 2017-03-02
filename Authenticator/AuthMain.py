@@ -35,5 +35,5 @@ if __name__ == "__main__":
         sock.close()
 
     except EOFError:
-        print ("\nCannot continue: End of File detected. Exiting...")
+        print("\nCannot continue: End of File detected. Exiting...")
         sys.exit()
