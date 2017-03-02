@@ -6,28 +6,30 @@ import sys
 import MyPackeTManager
 import ChapCodes
 
-
 def get_config_values():
     config = {}
     try:
-        config['port'] = raw_input("Enter the port to listen to: ")
-        config['localname'] = raw_input("Enter the name of the local (authenticator) system: ")
+        config['port'] = raw_input("Port number: ")
+        config['localname'] = raw_input("System name: ")
 
-        for setting in config:
-            if (config[setting] == ''):
-                raise Exception('Cannot continue: One or more settings are empty. Exiting...')
+        if not check_config_values_are_filled(config):
+            raise Exception('Configuration is not filled!')
 
     except Exception as e:
-
-        print "\nCannot continue: End of File detected. Exiting..."
-
+        print "\nERROR: ", e
         sys.exit()
 
     return config
 
+def check_config_values_are_filled(config):
+    for c in config:
+        if (config[c] == ''):
+            return False
+    return True
+
 def listen(config):
     sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-    sock.bind(('', int(config['port'])))  # Host == '' means any local IP address
+    sock.bind(('', int(config['port'])))
     print "Waiting for incoming authentication requests..."
     sock.listen(1)
     (conn, addr) = sock.accept()
@@ -36,7 +38,6 @@ def listen(config):
 def verify_response(response_data, identity, identifier, challenge):
     print "Verifying response for identifier:", identifier
 
-    # This is the list of valid identities and associated secrets
     identities = {}
     identities['jaure'] = '123';
 
