@@ -2,13 +2,12 @@ import hashlib
 import socket
 import struct
 import random
-import time
 import sys
 import MyPackeTManager
 import ChapCodes
 
 
-def get_config_values(type):
+def get_config_values():
     config = {}
     try:
         config['port'] = raw_input("Enter the port to listen to: ")
@@ -81,26 +80,3 @@ def process_response(response_packet):
             'response': response,
             'name': name}
 
-
-def authenticator(config):
-    sock = listen(config)
-    packet = MyPackeTManager.receive_packet(sock)
-    if (packet['code'] == ChapCodes.AUTH_REQUEST):
-        auth_request_data = process_authentication_request(packet)
-        (packet, challenge_identifier, challenge) = create_challenge(config, auth_request_data)
-        MyPackeTManager.send_packet(sock, packet)
-        packet = MyPackeTManager.receive_packet(sock)
-        if (packet['code'] == ChapCodes.RESPONSE):
-            if (packet['identifier'] == challenge_identifier):
-                response_data = process_response(packet)
-                if (verify_response(response_data, auth_request_data['identity'], challenge_identifier, challenge)):
-                    code = ChapCodes.SUCCESS
-                    data = ''
-                else:
-                    code = ChapCodes.FAILURE
-                    data = 'You are not registered'
-                packet = MyPackeTManager.createPacket(code, packet['identifier'], data)
-                MyPackeTManager.send_packet(sock, packet)
-
-    time.sleep(1)
-    sock.close()
