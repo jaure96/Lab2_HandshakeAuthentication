@@ -3,8 +3,10 @@ import socket
 import struct
 import random
 import sys
+import uuid
 import MyPackeTManager
 import ChapCodes
+
 
 def get_config_values():
     config = {}
@@ -31,18 +33,14 @@ def listen(config):
     sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
     sock.bind(('', int(config['port'])))
     print "Waiting for incoming authentication requests..."
-    sock.listen(1)
+    sock.listen(5) # 5 = zenbat entzule ipintzen dian kolan
     (conn, addr) = sock.accept()
     return conn
 
 def verify_response(response_data, identity, identifier, challenge):
-    print "Verifying response for identifier:", identifier
 
-    identities = {}
-    identities['jaure'] = '123';
-
-    if (identity in identities):
-        secret = identities[identity]
+    secret = check_identity_in_database(identity)
+    if not(secret ==''):
         hash = hashlib.sha256(chr(identifier) + secret + challenge)
         our_value = hash.digest()
         if (our_value == response_data['response']):
@@ -59,11 +57,12 @@ def process_authentication_request(auth_request_packet):
             'identity': identity}
 
 def create_challenge(config, auth_request_data):
+
     identifier = random.randint(0, 255)
-    # Create some random challenge, using the hash of a string
-    # composed of 60 random integer number in the range
-    # [1,100000000]
-    hash = hashlib.sha256(''.join(str(random.sample(xrange(10000000), 60))))
+
+    # Hash-a unikua izanbiada orduan string aleatorio bat sotzen dot
+    hash = hashlib.sha256(generate_random_string())
+
     challenge_value = hash.digest()
     challenge_value_size = struct.pack('!B', len(challenge_value))
     name = config['localname']
@@ -81,3 +80,14 @@ def process_response(response_packet):
             'response': response,
             'name': name}
 
+def generate_random_string():
+    return str(uuid.uuid4())
+
+def check_identity_in_database(identity):
+    identities = {}
+    identities['jaure'] = '123';
+
+    if (identity in identities):
+        return identities[identity]
+    else:
+        ''
