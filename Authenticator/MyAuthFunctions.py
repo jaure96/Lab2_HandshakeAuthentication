@@ -15,7 +15,7 @@ def read_secret_file(file_path):
         for line in f:
             (key, val) = line.split()
             dictionary[str(key)] = val
-            
+
     return dictionary
 
 
@@ -45,7 +45,7 @@ def check_config_values_are_filled(config):
 def listen(config):
     sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
     sock.bind(('', int(config['port'])))
-    print("Waiting for incoming authentication requests...")
+    print("Waiting for requests...")
     sock.listen(5)  # 5 = zenbat entzule ipintzen dian kolan
     (conn, addr) = sock.accept()
     return conn
@@ -81,7 +81,6 @@ def create_challenge(config):
     challenge_value_size = struct.pack('!B', len(challenge_value))
     name = config['localname']
     data = challenge_value_size + challenge_value + name
-    print ("Creating challenge with identifier:", identifier)
     packet = MyPacketManager.create_packet(GlobalVariables.CHALLENGE, identifier, data)
     return packet, identifier, challenge_value
 
@@ -90,7 +89,6 @@ def process_response(response_packet):
     response_len = struct.unpack('!B', response_packet['data'][0])[0]
     response = response_packet['data'][1:response_len + 1]
     name = response_packet['data'][response_len + 1:]
-    print("Processing response with identifier:", response_packet['identifier'], "name:", name)
 
     return {'identifier': response_packet['identifier'], 'response': response, 'name': name}
 
