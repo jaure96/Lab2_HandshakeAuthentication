@@ -9,11 +9,13 @@ import GlobalVariables
 
 
 def read_secret_file(file_path):
+
     dictionary = {}
     with open(file_path) as f:
         for line in f:
             (key, val) = line.split()
             dictionary[str(key)] = val
+            
     return dictionary
 
 
