@@ -10,6 +10,9 @@ SUCCESS = 0x03
 # 4. Failure.
 FAILURE = 0x04
 
+# My secret file path
+SECRET_FILE = "../Files/secrets.txt"
+
 
 
 

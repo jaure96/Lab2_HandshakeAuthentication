@@ -3,7 +3,7 @@ import socket
 import struct
 import sys
 import MyPacketManager
-import ChapCodes
+import GlobalVariables
 
 
 def get_config_values():
@@ -65,7 +65,7 @@ def create_response(config, challenge):
         name = config['localname']
         data = response_value_size + response_value + name
 
-        return MyPacketManager.create_packet(ChapCodes.RESPONSE, challenge['identifier'], data)
+        return MyPacketManager.create_packet(GlobalVariables.RESPONSE, challenge['identifier'], data)
 
     except Exception as e:
         print("\nERROR: ", e)

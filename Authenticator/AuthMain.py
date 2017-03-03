@@ -1,7 +1,7 @@
 import sys
 import MyAuthFunctions
 import MyPacketManager
-import ChapCodes
+import GlobalVariables
 
 if __name__ == "__main__":
     try:
@@ -14,20 +14,20 @@ if __name__ == "__main__":
         sock = MyAuthFunctions.listen(config)
         packet = MyPacketManager.receive_packet(sock)
 
-        if packet['code'] == ChapCodes.AUTH_REQUEST:
+        if packet['code'] == GlobalVariables.AUTH_REQUEST:
             auth_request_data = MyAuthFunctions.process_authentication_request(packet)
             (packet, challenge_id, challenge) = MyAuthFunctions.create_challenge(config)
             MyPacketManager.send_packet(sock, packet)
             packet = MyPacketManager.receive_packet(sock)
 
-            if packet['code'] == ChapCodes.RESPONSE:
+            if packet['code'] == GlobalVariables.RESPONSE:
                 if packet['identifier'] == challenge_id:
                     response_data = MyAuthFunctions.process_response(packet)
                     if MyAuthFunctions.verify_response(response_data, auth_request_data['identity'], challenge_id, challenge):
-                        code = ChapCodes.SUCCESS
+                        code = GlobalVariables.SUCCESS
                         data = ''
                     else:
-                        code = ChapCodes.FAILURE
+                        code = GlobalVariables.FAILURE
                         data = 'You are not registered'
                     packet = MyPacketManager.create_packet(code, packet['identifier'], data)
                     MyPacketManager.send_packet(sock, packet)

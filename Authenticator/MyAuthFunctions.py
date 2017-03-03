@@ -5,7 +5,16 @@ import random
 import sys
 import uuid
 import MyPacketManager
-import ChapCodes
+import GlobalVariables
+
+
+def read_secret_file(file_path):
+    dictionary = {}
+    with open(file_path) as f:
+        for line in f:
+            (key, val) = line.split()
+            dictionary[str(key)] = val
+    return dictionary
 
 
 def get_config_values():
@@ -71,7 +80,7 @@ def create_challenge(config):
     name = config['localname']
     data = challenge_value_size + challenge_value + name
     print ("Creating challenge with identifier:", identifier)
-    packet = MyPacketManager.create_packet(ChapCodes.CHALLENGE, identifier, data)
+    packet = MyPacketManager.create_packet(GlobalVariables.CHALLENGE, identifier, data)
     return packet, identifier, challenge_value
 
 
@@ -89,8 +98,8 @@ def generate_random_string():
 
 
 def check_identity_in_database(identity):
-    identities = {}
-    identities['jaure'] = '123'
+
+    identities = read_secret_file(GlobalVariables.SECRET_FILE)
 
     if identity in identities:
         return identities[identity]
